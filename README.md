@@ -22,7 +22,7 @@ We aim to develop a performant and neurophysiologically-sound framework for cont
 - [BCIIV](https://www.bbci.de/competition/iv/#dataset4) 
 - [Stanford-fingerflex.zip](https://searchworks.stanford.edu/view/zk881ps0522) 
 ## 2. Preprocessing
-We used MATLAB [FieldTrip](https://www.fieldtriptoolbox.org/) to preprocess the raw ECoG signals. The preprocessing code can be found here:
+We used MATLAB [FieldTrip-20230926](https://www.fieldtriptoolbox.org/) to preprocess the raw ECoG signals. The preprocessing code can be found here:
 
 - data_preprocessing/data_preprocessing_BCI4.m
 - data_preprocessing/data_preprocessing_Stanford.m
@@ -35,7 +35,9 @@ We used [MNE-Python (v1.8.0)](https://mne.tools/stable/index.html) to extract fe
 ## 4. Run experiments
 All models were run in HPC with .slurm files for job array submission. The complete environment configuration file can be found here:
 
-- finger_r/
+- finger_regression/environment.yml
+
+The following table summarizes the used scirpts for each experiment in the paper. We provided the raw outputs in the finger_regression/results folder.
 
 | Experiment | Script | Raw output|
 |-------------|-----------|-----------|
