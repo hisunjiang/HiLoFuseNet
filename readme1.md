@@ -1,31 +1,16 @@
 
 ## 🧠 **Hi**gh-gamma and **Lo**w-frequency ECoG signal **Fus**ion **Net**work (**HiLoFuseNet**) for **continuous finger movement decoding**
-This repository provides the official PyTorch implementation of the **Hi**gh-gamma and **Lo**w-frequency ECoG signal **Fus**ion **Net**work (**HiLoFuseNet**), a novel framework for **continuous finger movement decoding** from electrocorticography (ECoG).
-
-HiLoFuseNet is designed to efficiently integrate neurophysiologically distinct spectral components, achieving **State-of-the-Art (SOTA)** performance in Brain-Computer Interface (BCI) applications.
-
-The method is detailed in the paper:
+This repository provides the official PyTorch implementation of the finger movement decoding framework detailed in the paper:
 > Sun et al., "Spectro-Temporal Fusion of High-Gamma and Low-Frequency ECoG Signals for Intracranial Finger Movement Decoding," 2025. *under review*.
 
----
-
-## 🚀 Performance
-HiLoFuseNet significantly outperforms previous best methods on public datasets, as measured by the Pearson correlation coefficient ($r$):
-
-| Dataset | Metric (Pearson $r$) | HiLoFuseNet Score | Improvement over Previous Best |
-| :--- | :---: | :---: | :---: |
-| **BCI Competition IV** | 0.631 | **5.0%** |
-| **Stanford-FingerFlex** | 0.534 | **11.9%** |
+The model achieved SOTA decoding performance on the public BCI Competition IV and Stanford datasets, with Pearson correlation coefficients between true and predicted finger movement trajectories of 0.631 and 0.534, representing improvements of 5.0% and 11.9%, respectively, over the previous best methods.
 
 <img src="SOTA_comparison.png" alt="Comparison with previous previous studies on the BCIIV (blue) and Stanford (red) datasets." width="45%" />
 
 ---
 
 ## 🛠️ Decoding Framework
-The core contribution is a performant and neurophysiologically-sound framework featuring:
-
-1.  **Streamlined ECoG Feature Extraction:** Focusing on the crucial High-Gamma Activity (HGA) and Low-Frequency Signals (LFS).
-2.  **Compact Neural Network (HiLoFuseNet):** A specialized architecture for learning fused spectro-temporal information.
+The proposed framework is characterized by (a) a streamlined ECoG feature extraction pipeline and (b) a compact neural network for learning spectro-temporal information.
 
 <img src="model.png" alt="The HiLoFuseNet model architecture." width="70%" />
 
@@ -46,12 +31,12 @@ The core contribution is a performant and neurophysiologically-sound framework f
 
 ### 2. Signal Preprocessing
 Raw ECoG signals were preprocessed using **MATLAB FieldTrip-20230926**.
-* **BCIIV Preprocessing:** `data_preprocessing/data_preprocessing_BCI4.m`
-* **Stanford Preprocessing:** `data_preprocessing/data_preprocessing_Stanford.m`
+* BCIIV Preprocessing: `data_preprocessing/data_preprocessing_BCI4.m`
+* Stanford Preprocessing: `data_preprocessing/data_preprocessing_Stanford.m`
 
 ### 3. Feature Extraction
 Features were extracted using **MNE-Python (v1.8.0)**.
-* **Extraction Script:** `finger_regression/prepare_taskFormatedData.py`
+* Script: `finger_regression/prepare_taskFormatedData.py`
 
 ### 4. Run Experiments
 The environment is managed via `finger_regression/environment.yml`. The following table summarizes the scripts used to reproduce the paper's findings. Raw output files are provided in `finger_regression/results`.
