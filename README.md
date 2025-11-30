@@ -18,17 +18,19 @@ We aim to develop a performant and neurophysiologically-sound framework for cont
   > finger_regression/models/nn_regressors.py/HiLoFuseNet
 
 # 🚀Quick start
-## Datasets
-Download the used datasets: 
+## 1. Download Datasets
 - [BCIIV](https://www.bbci.de/competition/iv/#dataset4) 
 - [Stanford-fingerflex.zip](https://searchworks.stanford.edu/view/zk881ps0522) 
-## Preprocessing
+## 2. Preprocessing
 We used MATLAB [Fieldtrip](https://www.fieldtriptoolbox.org/) to preprocess the raw ECoG signals. The preprocessing code can be found here:
 
 - data_preprocessing/data_preprocessing_BCI4.m
 - data_preprocessing/data_preprocessing_Stanford.m
 
-## Feature extraction
+## 3. Feature extraction
+We used [MNE-Python (v1.8.0)](https://mne.tools/stable/index.html) to extract features for subsequent regression experiments. The code can be found here:
 
-## Experiments
+- finger_regression/prepare_taskFormatedData.py
+  
+## 4. Run experiments
 
