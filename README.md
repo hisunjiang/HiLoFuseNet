@@ -51,6 +51,6 @@ The environment is managed via `finger_regression/environment.yml`. The followin
 | DNN Single-Output Regression | `regression_o1_nn.py`, `submit_o1_nn.slurm` | `finger_regression/results/o1/varyingSeed` |
 
 ## Acknowledgement
-A huge shout-out and sincere thanks to the source code contributors for BTTR and HOPLS!
+A sincere thanks to the code contributors for BTTR and HOPLS!
 * BTTR: [https://github.com/TheAxeC/block-term-tensor-regression](https://github.com/TheAxeC/block-term-tensor-regression)
 * HOPLS: [https://github.com/arthurdehgan/HOPLS](https://github.com/arthurdehgan/HOPLS)
