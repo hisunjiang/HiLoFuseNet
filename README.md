@@ -26,8 +26,8 @@ The proposed framework is characterized by (a) a streamlined ECoG feature extrac
 ## 💾 Quick Start & Reproducibility
 
 ### 1. Download Datasets
-* **BCIIV:** [https://www.bbci.de/competition/iv/#dataset4](https://www.bbci.de/competition/iv/#dataset4)
-* **Stanford-FingerFlex:** [https://searchworks.stanford.edu/view/zk881ps0522](https://searchworks.stanford.edu/view/zk881ps0522)
+* BCIIV: [https://www.bbci.de/competition/iv/#dataset4](https://www.bbci.de/competition/iv/#dataset4)
+* Stanford-FingerFlex: [https://searchworks.stanford.edu/view/zk881ps0522](https://searchworks.stanford.edu/view/zk881ps0522)
 
 ### 2. Signal Preprocessing
 Raw ECoG signals were preprocessed using **MATLAB FieldTrip-20230926**.
@@ -49,3 +49,8 @@ The environment is managed via `finger_regression/environment.yml`. The followin
 | Ablation Study | `regression_o5_nn_ablation.py`, `submit_o5_nn_ablation.slurm` | `finger_regression/results/o5/ablation` |
 | Hyperparameter Test | `regression_o5_nn_hyperparameter.py`, `submit_o5_nn_hyperparameter.slurm` | `finger_regression/results/o5/hyperparameter` |
 | DNN Single-Output Regression | `regression_o1_nn.py`, `submit_o1_nn.slurm` | `finger_regression/results/o1/varyingSeed` |
+
+## Acknowledgement
+A huge shout-out and sincere thanks to the source code contributors for BTTR and HOPLS!
+* BTTR: [https://github.com/TheAxeC/block-term-tensor-regression](https://github.com/TheAxeC/block-term-tensor-regression)
+* HOPLS: [https://github.com/arthurdehgan/HOPLS](https://github.com/arthurdehgan/HOPLS)
