@@ -12,4 +12,7 @@ We aim to develop a performant and neurophysiologically-sound framework for cont
 <img src="model.png" alt="The model." width="70%" />
 
 ## The core takeaway functions
-- High-Gamma Activity (HGA) and Low-Frequency Signals (LFS) extraction: finger_regression/models/prepareDataset.py/HGALFS_feature_extractor
+- High-Gamma Activity (HGA) and Low-Frequency Signals (LFS) extraction
+  > finger_regression/models/prepareDataset.py/HGALFS_feature_extractor
+- HiLoFuseNet architecture
+  > finger_regression/models/nn_regressors.py/HiLoFuseNet
