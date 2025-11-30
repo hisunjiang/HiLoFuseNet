@@ -7,6 +7,6 @@ which achieves SOTA decoding performance on the public BCI Competition IV and St
 <img src="SOTA_comparison.png" alt="Comparison with previous previous studies on the BCIIV (blue) and Stanford (red) datasets." width="50%" />
 
 ## The proposed decoding framework
-We aim to develop a performant and neurophysiologically-sound framework for continuous finger movement decoding from ECoG. This is realized by proposing (a) a streamlined ECoG feature extraction pipeline and (b) a compact neural network for learning spectro-temporal information.
+We aim to develop a performant and neurophysiologically-sound framework for continuous finger movement decoding from ECoG. This was achieved by proposing (a) a streamlined ECoG feature extraction pipeline and (b) a compact neural network for learning spectro-temporal information.
 
 <img src="model.png" alt="The model." width="70%" />
