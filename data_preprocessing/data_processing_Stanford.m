@@ -40,9 +40,9 @@ for iS = 1:numel(subCode)
     data = data'*0.0298;
     
     % band stop filtering
-    data = ft_preproc_bandstopfilter(data, fs,[59.5 60.5], 3, 'but','twopass');
-    data = ft_preproc_bandstopfilter(data, fs,[119.5, 120.5], 3, 'but','twopass');
-    data = ft_preproc_bandstopfilter(data, fs,[179.5, 180.5], 3, 'but','twopass');
+    data = ft_preproc_bandstopfilter(data, fs,[59.5 60.5], 3, 'but','onepass');
+    data = ft_preproc_bandstopfilter(data, fs,[119.5, 120.5], 3, 'but','onepass');
+    data = ft_preproc_bandstopfilter(data, fs,[179.5, 180.5], 3, 'but','onepass');
 
     % find and exclude bad channels (interactive)
     nCh = size(data, 1);
