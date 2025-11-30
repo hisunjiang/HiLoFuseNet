@@ -7,7 +7,7 @@ from models.prepareDataset import Scaler4D, constructDataset, BatchShuffleSample
 
 from models.nn_regressors import LSTM, CNN_LSTM, HiLoFuseNet
 from models.nn_train_and_test import train, validation, test, EarlyStopping_performance
-from models.nn_lossFunc import MSELoss, MSESCLoss
+from models.nn_lossFunc import MSELoss
 
 import torch
 from torch.utils.data import DataLoader
@@ -56,16 +56,15 @@ datasets = {
         "fs_ecog": 1000,
         "fs_dg": 25,
         # file path to extracted features
-        "path": '/lustre1/scratch/355/vsc35565/finger_ECoG/BCIIV/'
+        "path": './BCIIV/features/'
     },
     "Stanford": {
         "subjects": 9,
-        "subject_name": ['bp', 'cc', 'ht', 'jc', 'jp', 'mv', 'wc', 'wm', 'zt'],
+        "subject_name": ['bp', 'cc', 'ht','jc','jp','mv','wc','wm','zt'],
         "fs_ecog": 1000,
         "fs_dg": 25,
-        "path": '/lustre1/scratch/355/vsc35565/finger_ECoG/Stanford/'
-        # "path": 'I:/KUL lab/projects/finger_ECoG/data/Stanford/features/'
-    },
+        "path": './Stanford/features/'
+    }
 }
 
 fileLoc = datasets[dataset]['path']
@@ -133,11 +132,8 @@ for iS in range(datasets[dataset]['subjects']):
     val_loader = DataLoader(valDataset, batch_size=64, shuffle=False, worker_init_fn=seed_worker, generator=g)
     test_loader = DataLoader(testDataset, batch_size=64, shuffle=False, worker_init_fn=seed_worker, generator=g)
     
-    if lossFunc == 'mse':
-        loss_function = MSELoss()
-    elif lossFunc == 'SCloss':
-        loss_function = MSESCLoss()
-    
+    loss_function = MSELoss()
+
     optimizer = torch.optim.Adam(list(model.parameters()), lr=1 * 1e-3)
     
     # training

@@ -13,7 +13,7 @@ from models.prepareDataset import Scaler4D, constructDataset, BatchShuffleSample
 
 from models.nn_regressors import LSTM, CNN_LSTM, HiLoFuseNet
 from models.nn_train_and_test import train, validation, test, EarlyStopping_performance
-from models.nn_lossFunc import MSELoss, MSESCLoss
+from models.nn_lossFunc import MSELoss
 
 import torch
 from torch.utils.data import DataLoader
@@ -73,15 +73,15 @@ datasets = {
         "fs_ecog": 1000,
         "fs_dg": 25,
         # file path to extracted features
-        "path": '/lustre1/scratch/355/vsc35565/finger_ECoG/BCIIV/'
+        "path": './BCIIV/features/'
     },
     "Stanford": {
         "subjects": 9,
         "subject_name": ['bp', 'cc', 'ht','jc','jp','mv','wc','wm','zt'],
         "fs_ecog": 1000,
         "fs_dg": 25,
-        "path": '/lustre1/scratch/355/vsc35565/finger_ECoG/Stanford/'
-    },
+        "path": './Stanford/features/'
+    }
 }
 
 fileLoc = datasets[dataset]['path']

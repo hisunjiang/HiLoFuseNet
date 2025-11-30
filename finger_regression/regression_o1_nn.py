@@ -13,7 +13,7 @@ from models.prepareDataset import Scaler4D, constructDataset, BatchShuffleSample
 
 from models.nn_regressors import LSTM, CNN_LSTM, HiLoFuseNet
 from models.nn_train_and_test import train, validation, test, EarlyStopping_performance
-from models.nn_lossFunc import MSELoss, MSESCLoss
+from models.nn_lossFunc import MSELoss
 
 import torch
 from torch.utils.data import DataLoader
@@ -56,7 +56,7 @@ parser.add_argument('--decoder', type=str, default='HiLoFuseNet',
                     choices=['LSTM', 'CNN_LSTM', 'HiLoFuseNet'],
                     help='Decoder type')
 parser.add_argument('--lossFunc', type=str, default='mse',
-                    choices=['SCloss', 'mse'],
+                    choices=['mse'],
                     help='Loss function')
 parser.add_argument('--seed', type=int, default=42,
                     choices=[42,43,44,45, 46,47,48, 49,50,51],
@@ -80,15 +80,15 @@ datasets = {
         "fs_ecog": 1000,
         "fs_dg": 25,
         # file path to extracted features
-        "path": '/lustre1/scratch/355/vsc35565/finger_ECoG/BCIIV/'
+        "path": './BCIIV/features/'
     },
     "Stanford": {
         "subjects": 9,
         "subject_name": ['bp', 'cc', 'ht','jc','jp','mv','wc','wm','zt'],
         "fs_ecog": 1000,
         "fs_dg": 25,
-        "path": '/lustre1/scratch/355/vsc35565/finger_ECoG/Stanford/'
-    },
+        "path": './Stanford/features/'
+    }
 }
 
 fileLoc = datasets[dataset]['path']
@@ -149,12 +149,8 @@ for iS in range(datasets[dataset]['subjects']):
 
     model.to(device)
 
-    # choose a loss function
-    if lossFunc == 'mse':
-        loss_function = MSELoss()
-    elif lossFunc == 'SCloss':
-        loss_function = MSESCLoss()
-
+    loss_function = MSELoss()
+    
     optimizer = torch.optim.Adam(list(model.parameters()), lr=1 * 1e-3)
 
     # loop fingers

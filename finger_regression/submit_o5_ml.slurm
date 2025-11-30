@@ -4,19 +4,16 @@
 #SBATCH --ntasks="1"
 #SBATCH --mem="64G"
 #SBATCH --time="24:00:00"
-#SBATCH --account="llonpp"
+#SBATCH --account="xxxx" 						# <- change here
 #SBATCH --job-name="finger_o5_ml"
-#SBATCH --chdir="/vsc-hard-mounts/leuven-user/355/vsc35565/TNNLS2025/"
-#SBATCH --error="/vsc-hard-mounts/leuven-user/355/vsc35565/TNNLS2025/logs/%x.e%A"
-#SBATCH --output="/vsc-hard-mounts/leuven-user/355/vsc35565/TNNLS2025/logs/%x.o%A"
+#SBATCH --chdir="/project/" 					# <- change here
+#SBATCH --error="/project/logs/%x.e%A_%a" 		# <- change here
+#SBATCH --output="/project/logs/%x.o%A_%a" 		# <- change here
 #SBATCH --mail-type="END,FAIL,TIME_LIMIT"
-#SBATCH --mail-user="qiang.sun@kuleuven.be"
+#SBATCH --mail-user="qiang.sun@kuleuven.be" 	# <- change here
 #SBATCH --array=0-5
 
-# export PATH="/vsc-hard-mounts/leuven-data/355/vsc35565/miniconda/bin:$PATH"
-# source activate pytorch
-
-source /vsc-hard-mounts/leuven-data/355/vsc35565/miniconda/etc/profile.d/conda.sh
+source /xxxx/miniconda/etc/profile.d/conda.sh 	# <- change here
 conda activate decode
 
 export PYTHONHASHSEED=42

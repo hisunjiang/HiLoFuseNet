@@ -41,15 +41,15 @@ datasets = {
         "fs_ecog": 1000,
         "fs_dg": 25,
         # file path to extracted features
-        "path": '/lustre1/scratch/355/vsc35565/finger_ECoG/BCIIV/'
+        "path": './BCIIV/features/'
     },
     "Stanford": {
         "subjects": 9,
         "subject_name": ['bp', 'cc', 'ht','jc','jp','mv','wc','wm','zt'],
         "fs_ecog": 1000,
         "fs_dg": 25,
-        "path": '/lustre1/scratch/355/vsc35565/finger_ECoG/Stanford/'
-    },
+        "path": './Stanford/features/'
+    }
 }
 
 fileLoc = datasets[dataset]['path']
