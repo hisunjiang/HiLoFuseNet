@@ -39,7 +39,7 @@ Features were extracted using **MNE-Python (v1.8.0)**.
 * Script: `finger_regression/prepare_taskFormatedData.py`
 
 ### 4. Run Experiments
-The environment is managed via `finger_regression/environment.yml`. The following table summarizes the scripts used to reproduce the paper's findings. Raw output files are provided in `finger_regression/results`.
+Configure the pytorch environment via `finger_regression/environment.yml`. The following table summarizes the scripts used to reproduce the paper's findings. Raw output files are provided in `finger_regression/results`.
 
 | Experiment | Execution Script(s) | Results Folder |
 | :--- | :--- | :--- |
