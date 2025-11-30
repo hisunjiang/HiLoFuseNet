@@ -46,44 +46,6 @@ class Scaler4D(BaseEstimator, TransformerMixin):
                     X_scaled[:, c, s, b] = z
         return X_scaled
 
-class Scaler3D(BaseEstimator, TransformerMixin):
-    """
-    Z-score normalization for 3D input: [nEpoch, nSequence, nFeature].
-    Mean/std computed over epochs for each (sequence, feature).
-    Added clipping to avoid extreme values.
-    """
-    def __init__(self, eps=1e-6, min_std=1e-3, clip_z=5.0):
-        self.eps = eps
-        self.min_std = min_std
-        self.clip_z = clip_z
-
-    def fit(self, X):
-        self.scalers_ = {}
-        nSequence, nFeature = X.shape[1], X.shape[2]
-        for d1 in range(nSequence):
-            for d2 in range(nFeature):
-                values = X[:, d1, d2]
-                mean = values.mean()
-                std = values.std()
-                std = max(std, self.min_std)
-                self.scalers_[(d1, d2)] = (mean, std)
-        return self
-
-    def transform(self, X):
-        X_scaled = np.empty_like(X, dtype=np.float32)
-        nSequence, nFeature = X.shape[1], X.shape[2]
-        for d1 in range(nSequence):
-            for d2 in range(nFeature):
-                mean, std = self.scalers_[(d1, d2)]
-                z = (X[:, d1, d2] - mean) / (std + self.eps)
-
-                # clip to [-clip_z, clip_z]
-                if self.clip_z is not None:
-                    z = np.clip(z, -self.clip_z, self.clip_z)
-
-                X_scaled[:, d1, d2] = z
-        return X_scaled
-
 class constructDataset(Dataset):
     def __init__(self, ecog, traj):
         self.inputs = torch.tensor(ecog, dtype=torch.float32)
