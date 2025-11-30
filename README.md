@@ -33,11 +33,11 @@ We used [MNE-Python (v1.8.0)](https://mne.tools/stable/index.html) to extract fe
 - finger_regression/prepare_taskFormatedData.py
   
 ## 4. Run experiments
-All models were run in HPC with .slurm files for job array submission. The complete environment configuration file can be found here:
+The complete environment configuration file can be found here:
 
 - finger_regression/environment.yml
 
-The following table summarizes the used scirpts for each experiment in the paper. We provided the raw outputs in the finger_regression/results folder.
+The following table summarizes the used scirpts for each experiment in the paper. All models were run in HPC with .slurm files for job array submission. We provided the raw outputs in the finger_regression/results folder.
 
 | Experiment | Script | Raw output|
 |-------------|-----------|-----------|
