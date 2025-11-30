@@ -10,3 +10,6 @@ which achieves SOTA decoding performance on the public BCI Competition IV and St
 We aim to develop a performant and neurophysiologically-sound framework for continuous finger movement decoding from ECoG. This was achieved by proposing (a) a streamlined ECoG feature extraction pipeline and (b) a compact neural network for learning spectro-temporal information.
 
 <img src="model.png" alt="The model." width="70%" />
+
+## The core takeaway functions
+- High-Gamma Activity (HGA) and Low-Frequency Signals (LFS) extraction: finger_regression/models/prepareDataset.py/HGALFS_feature_extractor
