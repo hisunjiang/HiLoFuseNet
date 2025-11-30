@@ -22,7 +22,7 @@ We aim to develop a performant and neurophysiologically-sound framework for cont
 - [BCIIV](https://www.bbci.de/competition/iv/#dataset4) 
 - [Stanford-fingerflex.zip](https://searchworks.stanford.edu/view/zk881ps0522) 
 ## 2. Preprocessing
-We used MATLAB [Fieldtrip](https://www.fieldtriptoolbox.org/) to preprocess the raw ECoG signals. The preprocessing code can be found here:
+We used MATLAB [FieldTrip](https://www.fieldtriptoolbox.org/) to preprocess the raw ECoG signals. The preprocessing code can be found here:
 
 - data_preprocessing/data_preprocessing_BCI4.m
 - data_preprocessing/data_preprocessing_Stanford.m
@@ -33,4 +33,15 @@ We used [MNE-Python (v1.8.0)](https://mne.tools/stable/index.html) to extract fe
 - finger_regression/prepare_taskFormatedData.py
   
 ## 4. Run experiments
+All models were run in HPC with .slurm files for job array submission. The complete environment configuration file can be found here:
 
+- finger_r/
+
+| Experiment | Script | Raw output|
+|-------------|-----------|-----------|
+| Get DNN multi-output results | regression_o5_nn.py <br> submit_o5_nn.slurm | finger_regression/results/o5/varyingSeed|
+| Get ML model multi-output results | regression_o5_ml.py <br> submit_o5_ml.slurm | finger_regression/results/o5|
+| Interpret model learned representation| regression_o5_nn_interpretModel.py <br> submit_o5_nn_interpretModel.slurm | finger_regression/results/o5/interpretModel|
+| Ablation study| regression_o5_nn_ablation.py <br> submit_o5_nn_ablation.slurm | finger_regression/results/o5/ablation|
+| Test hyperparameter| regression_o5_nn_hyperparameter.py <br> submit_o5_nn_hyperparameter.slurm | finger_regression/results/o5/hyperparameter|
+| Get DNN single-output results| regression_o1_nn.py <br> submit_o1_nn.slurm | finger_regression/results/o1/varyingSeed|
