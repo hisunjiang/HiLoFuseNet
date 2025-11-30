@@ -1,4 +1,4 @@
-# HiLoFuseNet
+# 🌟HiLoFuseNet
 This repository provides the official PyTorch implementation of the **ECoG decoding framework** proposed in the paper: 
 >Sun et al., "Spectro-Temporal Fusion of High-Gamma and Low-Frequency ECoG Signals for Intracranial Finger Movement Decoding," 2025. *under review*.
 
