@@ -54,3 +54,9 @@ Configure the pytorch environment via `finger_regression/environment.yml`. The f
 A sincere thanks to the code contributors for BTTR and HOPLS!
 * BTTR: [https://github.com/TheAxeC/block-term-tensor-regression](https://github.com/TheAxeC/block-term-tensor-regression)
 * HOPLS: [https://github.com/arthurdehgan/HOPLS](https://github.com/arthurdehgan/HOPLS)
+
+## Citation
+Hope this model helps your research. We would be appreciated if u cite us.
+
+```
+to be appeared...
