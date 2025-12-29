@@ -39,7 +39,7 @@ Features were extracted using **MNE-Python (v1.8.0)**.
 * Script: `finger_regression/prepare_taskFormatedData.py`
 
 ### 4. Run Experiments
-Configure the pytorch environment via `finger_regression/environment.yml`. The following table summarizes the scripts used to reproduce the paper's findings. Raw output files are provided in `finger_regression/results`.
+Configure the pytorch environment via `finger_regression/environment.yml`. The following table summarizes the scripts used to reproduce the paper's findings. Raw output files are provided in `finger_regression/results`. The .slum file provides the code to interact with a supercomputing cluster. If you run the script locally, please change the inputs in the .py file according to the corresponding settings from the .slurm file. 
 
 | Experiment | Execution Script(s) | Results Folder |
 | :--- | :--- | :--- |
