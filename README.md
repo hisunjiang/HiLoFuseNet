@@ -43,7 +43,7 @@ Configure the pytorch environment via `finger_regression/environment.yml`. The f
 
 | Experiment | Execution Script(s) | Results Folder |
 | :--- | :--- | :--- |
-| DNN Multi-Output Regression | `regression_o5_nn.py`, `submit_o5_nn.slurm` | `finger_regression/results/o5/varyingSeed` |
+| **DNN Multi-Output Regression** | **`regression_o5_nn.py`, `submit_o5_nn.slurm`** | **`finger_regression/results/o5/varyingSeed`** |
 | ML Multi-Output Regression | `regression_o5_ml.py`, `submit_o5_ml.slurm` | `finger_regression/results/o5` |
 | Model Interpretation | `regression_o5_nn_interpretModel.py`, `submit_o5_nn_interpretModel.slurm` | `finger_regression/results/o5/interpretModel` |
 | Ablation Study | `regression_o5_nn_ablation.py`, `submit_o5_nn_ablation.slurm` | `finger_regression/results/o5/ablation` |
