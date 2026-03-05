@@ -1,6 +1,6 @@
 """
 DESCRIPTION:
-    Prepare the ECoG and trajectory data in a task format, i.e., pair prior 1-s ECoG epoch with the next trjectory point.
+    Prepare the ECoG and trajectory data in a task format, i.e., pair prior 1-s ECoG epoch with the next trajectory point.
 """
 
 from scipy.io import loadmat
