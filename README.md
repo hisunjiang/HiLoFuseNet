@@ -7,8 +7,8 @@ The model achieved SOTA decoding performance on the public BCI Competition IV an
 
 <img src="SOTA_comparison.png" alt="Comparison with previous previous studies on the BCIIV (blue) and Stanford (red) datasets." width="45%" />
 
-## 📢 News
-- This original submission to TNNLS get rejected! We are improving the current version of decoding framework and doing thorough comparisons against more decoders.
+## 📢📢📢 News
+- Our original submission to TNNLS was rejected. The reviewers raised concerns regarding the state-of-the-art claim and the necessity of fusing low-frequency signals. We are currently improving the decoding framework and conducting thorough comparisons against the latest decoders.
 
 ## ⚠️⚠️⚠️ We need you!
 We benchmarked a large number of decoders across the two datasets. Since most of them did not open-source their code, despite our best efforts to replicate the reported results, the discrepancies we observed were substantial. If, by any chance, you find that our implementation is incorrect, please email us!
