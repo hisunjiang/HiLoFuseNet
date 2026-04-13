@@ -7,6 +7,9 @@ The model achieved SOTA decoding performance on the public BCI Competition IV an
 
 <img src="SOTA_comparison.png" alt="Comparison with previous previous studies on the BCIIV (blue) and Stanford (red) datasets." width="45%" />
 
+## News
+- This original submission to TNNLS get rejected! We are improving the current version of decoding framework and doing more comparisons against more decoders.
+- 
 ---
 
 ## 🛠️ Decoding Framework
