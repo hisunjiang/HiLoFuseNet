@@ -7,11 +7,13 @@ The model achieved SOTA decoding performance on the public BCI Competition IV an
 
 <img src="SOTA_comparison.png" alt="Comparison with previous previous studies on the BCIIV (blue) and Stanford (red) datasets." width="45%" />
 
-## News
-- This original submission to TNNLS get rejected! We are improving the current version of decoding framework and doing more comparisons against more decoders.
-- 
----
+## 📢 News
+- This original submission to TNNLS get rejected! We are improving the current version of decoding framework and doing thorough comparisons against more decoders.
 
+## ⚠️⚠️⚠️ We need you!
+We benchmarked a large number of decoders across the two datasets. Since most of them did not open-source their code, despite our best efforts to replicate the reported results, the discrepancies we observed were substantial. If, by any chance, you find that our implementation is incorrect, please email us!
+
+---
 ## 🛠️ Decoding Framework
 The proposed framework is characterized by (a) a streamlined ECoG feature extraction pipeline and (b) a compact neural network for learning spectro-temporal information.
 
