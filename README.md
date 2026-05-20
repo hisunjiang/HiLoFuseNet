@@ -1,17 +1,10 @@
 
 ## 🧠 **Hi**gh-gamma and **Lo**w-frequency ECoG signal **Fus**ion **Net**work (**HiLoFuseNet**) for **continuous finger movement decoding**
 This repository provides the official PyTorch implementation of the finger movement decoding framework detailed in the paper:
-> Sun et al., "Spectro-Temporal Fusion of High-Gamma and Low-Frequency ECoG Signals for Intracranial Finger Movement Decoding," 2025. *under review*.
+> Sun et al., "Spectro-Temporal Fusion of High-Gamma and Low-Frequency ECoG Signals for Intracranial Finger Movement Decoding," 2026. *under review*.
 
-The model achieved SOTA decoding performance on the public BCI Competition IV and Stanford datasets, with Pearson correlation coefficients between true and predicted finger movement trajectories of 0.631 and 0.534, representing improvements of 5.0% and 11.9%, respectively, over the previous best methods.
-
-<img src="SOTA_comparison.png" alt="Comparison with previous previous studies on the BCIIV (blue) and Stanford (red) datasets." width="45%" />
-
-## 📢📢📢 News
-- Our original submission to TNNLS was rejected. The reviewers raised concerns regarding the state-of-the-art claim and the necessity of fusing low-frequency signals. We are currently improving the decoding framework and conducting thorough comparisons against the latest decoders.
-
-## ⚠️⚠️⚠️ We need you!
-We benchmarked a large number of decoders across the two datasets. Since most of them did not open-source their code, despite our best efforts to replicate the reported results, the discrepancies we observed were substantial. If, by any chance, you find that our implementation is incorrect, please email us!
+## ⚠️⚠️⚠️ We need you
+We benchmarked a large number of decoders across the two datasets. Since most of them did not open-source their code, despite our best efforts to replicate the reported results, the discrepancies we observed were substantial. If, by any chance, you find that our implementation is incorrect, please contact us.
 
 ---
 ## 🛠️ Decoding Framework
