@@ -22,7 +22,7 @@ class Scaler4D(BaseEstimator, TransformerMixin):
         for c in range(nChannel):
             for s in range(nSequence):
                 for b in range(nBand):
-                    values = X[:, c, s, b]   # 所有 epoch 的值
+                    values = X[:, c, s, b] 
                     mean = values.mean()
                     std = values.std()
                     std = max(std, self.min_std)
