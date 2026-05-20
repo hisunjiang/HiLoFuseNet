@@ -4,7 +4,7 @@ This repository provides the official PyTorch implementation of the finger movem
 > Sun et al., "Spectro-Temporal Fusion of High-Gamma and Low-Frequency ECoG Signals for Intracranial Finger Movement Decoding," 2026. *under review*.
 
 ## ⚠️⚠️⚠️ We need you
-We benchmarked a large number of decoders across the two datasets. Since most of them did not open-source their code, despite our best efforts to replicate the reported results, the discrepancies we observed were substantial. If, by any chance, you find that our implementation is incorrect, please contact us.
+We benchmarked a large number of decoders across the BCIIV and Stanford fingerflex datasets. Since most of them did not open-source their code, despite our best efforts to replicate the reported results, the discrepancies we observed were substantial. If, by any chance, you find that our implementation is incorrect, please contact us.
 
 ---
 ## 🛠️ Decoding Framework
