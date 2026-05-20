@@ -1,4 +1,5 @@
 import torch
+import copy
 from scipy.stats import pearsonr
 
 def train(loader, model, optimizer, loss_function, device):
@@ -159,80 +160,32 @@ def test(loader, model, device):
         corr, _ = pearsonr(all_preds.squeeze(), all_labels.squeeze())
         epoch_corr.append(corr)
 
-    # epoch_corr = []
-    # if all_preds.dim() == 2 and all_preds.shape[1] > 1:
-    #     # multi-output regression
-    #     num_vars = all_preds.shape[1]
-    #     for i in range(num_vars):
-    #         corr_parts = []
-    #         preds_chunks = torch.chunk(all_preds[:, i], 5)
-    #         labels_chunks = torch.chunk(all_labels[:, i], 5)
-    #         for preds_part, labels_part in zip(preds_chunks, labels_chunks):
-    #             corr, _ = pearsonr(preds_part.cpu().numpy(), labels_part.cpu().numpy())
-    #             corr_parts.append(corr)
-    #         epoch_corr.append(sum(corr_parts) / len(corr_parts))
-    # else:
-    #     # single-output regression
-    #     corr_parts = []
-    #     preds_chunks = torch.chunk(all_preds.squeeze(), 5)
-    #     labels_chunks = torch.chunk(all_labels.squeeze(), 5)
-    #     for preds_part, labels_part in zip(preds_chunks, labels_chunks):
-    #         corr, _ = pearsonr(preds_part.cpu().numpy(), labels_part.cpu().numpy())
-    #         corr_parts.append(corr)
-    #     epoch_corr.append(sum(corr_parts) / len(corr_parts))
-
     return epoch_corr, all_labels, all_preds
-
-class EarlyStopping_loss:
-    def __init__(self, patience=5, min_delta=1e-4):
-        self.patience = patience
-        self.min_delta = min_delta
-        self.best_loss = float('inf')
-        self.counter = 0
-        self.best_model_weights = None
-
-    def __call__(self, val_loss, model):
-        if val_loss < self.best_loss - self.min_delta:
-            self.best_loss = val_loss
-            self.counter = 0
-            self.best_model_weights = model.state_dict()
-        else:
-            self.counter += 1
-            # print(f"EarlyStopping counter: {self.counter}/{self.patience}")
-
-        if self.counter >= self.patience:
-
-            return self.best_model_weights
-        return None
 
 class EarlyStopping_performance:
     def __init__(self, patience=5, min_delta=0.001):
-        """
-        Args:
-            patience (int): 容忍多少个epoch没有提升
-            min_delta (float): 至少要提升多少才算真正的提升
-        """
         self.patience = patience
         self.min_delta = min_delta
         self.best_score = float('-inf')
         self.counter = 0
         self.best_model_weights = None
+        self.best_epoch = 0
 
-    def __call__(self, val_score, model):
-        """
-        Args:
-            val_score (float): validation performance (accuracy/AUC/F1)
-            model (torch.nn.Module):
-        """
+    def __call__(self, val_score, model, epoch):
         if val_score > self.best_score + self.min_delta:
             self.best_score = val_score
             self.counter = 0
-            self.best_model_weights = model.state_dict()
+            self.best_model_weights = copy.deepcopy(model.state_dict())
+            self.best_epoch = epoch
+            # print(f"Best model updated at epoch {epoch} with score {val_score:.4f}")
         else:
             self.counter += 1
-            # print(f"EarlyStopping counter: {self.counter}/{self.patience}")
 
         if self.counter >= self.patience:
-            return self.best_model_weights
-        return None
+            return True
+        return False
 
+    def load_best_model(self, model):
+        if self.best_model_weights is not None:
+            model.load_state_dict(self.best_model_weights)
+            print(f"Loaded best model from epoch {self.best_epoch} (Score: {self.best_score:.4f})")
