@@ -49,7 +49,7 @@ A sincere thanks to the code contributors of BTTR, HOPLS, and DeepFingerNet.
 * HOPLS: [https://github.com/arthurdehgan/HOPLS](https://github.com/arthurdehgan/HOPLS)
 * DeepFingerNet: [https://github.com/UM-Tao/DeepFingerNet](https://github.com/UM-Tao/DeepFingerNet)
 
-## ⚠️⚠️⚠️ We need you
+## ⚠️ We need you
 We benchmarked a large number of decoders across the BCIIV and Stanford fingerflex datasets. Since most of them did not open-source their code, despite our best efforts to replicate the reported results, the discrepancies we observed were substantial. If, by any chance, you find that our implementation is incorrect, please contact us.
 
 ## Citation
