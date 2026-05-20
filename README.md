@@ -36,7 +36,7 @@ $\color{red}{\text{Check the source data:}}$ Raw output files are provided in `f
 
 | Experiment | Execution Script(s) | Results Folder |
 | :--- | :--- | :--- |
-| DNNs | `regression_o5_nn.py`, `submit_o5_nn.slurm` | `finger_regression/results/o5/varyingSeed` |
+| DNNs | `regression_o5_nn.py`, `submit_o5_nn.slurm` | `finger_regression/results/o5/varyingWindow` |
 | MLs | `regression_o5_ml.py`, `submit_o5_ml.slurm` | `finger_regression/results/o5` |
 | Model Interpretation | `regression_o5_nn_interpretModel.py`, `submit_o5_nn_interpretModel.slurm` | `finger_regression/results/o5/interpretModel` |
 | Ablation Study | `regression_o5_nn_ablation.py`, `submit_o5_nn_ablation.slurm` | `finger_regression/results/o5/ablation` |
