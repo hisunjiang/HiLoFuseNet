@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH --cluster genius
+#SBATCH --cluster wice
 #SBATCH --partition batch
 #SBATCH --ntasks="1"
 #SBATCH --mem="64G"
@@ -11,7 +11,7 @@
 #SBATCH --output="/project/logs/%x.o%A_%a" 		# <- change here
 #SBATCH --mail-type="END,FAIL,TIME_LIMIT"
 #SBATCH --mail-user="qiang.sun@kuleuven.be" 	# <- change here
-#SBATCH --array=0-5
+#SBATCH --array=0-155							# <- change here
 
 source /xxxx/miniconda/etc/profile.d/conda.sh 	# <- change here
 conda activate decode
@@ -21,20 +21,48 @@ export PYTHONHASHSEED=42
 python - <<PYCODE
 import itertools
 import subprocess
+import time
+import numpy as np
 
-datasets = ['BCIIV', 'Stanford'] # 'BCIIV', 'Stanford'
-decoders = ['PLS', 'HOPLS', 'BTTR'] # 'PLS', 'HOPLS', 'BTTR'
+datasets_meta = {
+    "BCIIV": ['sub1', 'sub2', 'sub3'], 
+    "Stanford": ['bp', 'cc', 'ht','jc','jp','mv','wc','wm','zt']
+}
+decoders = ['RF'] # 'PLS',  'NPLS','HOPLS', 'eBTTR', 'RF'
+win_sizes = [round(f, 1) for f in np.arange(0.4, 3, 0.2)] #
 
-combinations = list(itertools.product(datasets, decoders))
+combinations = []
+for ds_name, subjects in datasets_meta.items():
+    for sub in subjects:
+        for dec in decoders:
+            for ws in win_sizes:
+                combinations.append((ds_name, sub, dec, ws))
 
+# get current task ID
 task_id = int("${SLURM_ARRAY_TASK_ID}")
-dataset, decoder = combinations[task_id]
+if task_id >= len(combinations):
+    print(f"Task ID {task_id} out of range (max {len(combinations)-1})")
+    exit(1)
 
-print(f"Running combination: dataset={dataset}, decoder={decoder}")
+dataset, subject, decoder, win_size = combinations[task_id]
 
+print(f"--- Task {task_id} ---")
+print(f"Dataset: {dataset} | Subject: {subject} | Decoder: {decoder} | Win: {win_size}")
+
+# run jobs
+start_time  = time.time()
 subprocess.run([
     "python", "regression_o5_ml.py",
     "--dataset", dataset,
+    "--subject", subject,
     "--decoder", decoder,
+    "--win_size", str(win_size)
 ])
+
+end_time = time.time()
+duration = (end_time - start_time) / 60
+print(f"==================================================")
+print(f"Task {task_id} completed in: {duration:.2f} minutes")
+print(f"==================================================")
+
 PYCODE

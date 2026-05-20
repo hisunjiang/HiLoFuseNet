@@ -8,10 +8,10 @@ import argparse
 import random
 import os
 import numpy as np
-import pickle
-from models.prepareDataset import Scaler4D, constructDataset, BatchShuffleSampler, select_ecog_features
+from scipy.io import loadmat
 
-from models.nn_regressors import LSTM, CNN_LSTM, HiLoFuseNet
+from models.prepareDataset import Scaler3D, Scaler4D, constructDataset, BatchShuffleSampler, prepare_taskFormatedData, select_ecog_features
+from models.nn_regressors import HiLoFuseNet
 from models.nn_train_and_test import train, validation, test, EarlyStopping_performance
 from models.nn_lossFunc import MSELoss
 
@@ -36,7 +36,9 @@ def set_seed(seed=42):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
+    torch.set_float32_matmul_precision("highest")
     os.environ['PYTHONHASHSEED'] = str(seed)
+    os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
 
 # random seeds for dataloader
 def seed_worker(worker_id):
@@ -46,21 +48,23 @@ def seed_worker(worker_id):
 # some settings listed below:
 epoches = 200
 batch_size = 128
+feature_type = 'HGALFS'
+seed = 42
+win_size = 2.8
+decoder = 'HiLoFuseNet'
+lossFunc = 'mse'
 
 parser = argparse.ArgumentParser(description='Finger Regression Task')
 
 parser.add_argument('--dataset', type=str, required=True)
-parser.add_argument('--decoder', type=str, required=True)
 parser.add_argument('--CNN_D', type=int, required=True)
 parser.add_argument('--LSTM_hiddensize', type=int, required=True)
 
 args = parser.parse_args()
 
 dataset = args.dataset
-decoder = args.decoder
 LSTM_hiddensize = args.LSTM_hiddensize
 CNN_D = args.CNN_D
-seed = 42
 
 save_root = 'results/o5/hyperparameter/'
 os.makedirs(save_root, exist_ok=True)
@@ -72,16 +76,16 @@ datasets = {
         "subject_name": ['sub1', 'sub2', 'sub3'],
         "fs_ecog": 1000,
         "fs_dg": 25,
-        # file path to extracted features
-        "path": './BCIIV/features/'
+        # file path to preprocessed data
+        "path": './data/BCIIV/'
     },
     "Stanford": {
         "subjects": 9,
         "subject_name": ['bp', 'cc', 'ht','jc','jp','mv','wc','wm','zt'],
         "fs_ecog": 1000,
         "fs_dg": 25,
-        "path": './Stanford/features/'
-    }
+        "path": './data/Stanford/'
+    },
 }
 
 fileLoc = datasets[dataset]['path']
@@ -94,19 +98,22 @@ traj_pred = {f'sub{iS}': [] for iS in range(datasets[dataset]['subjects'])}
     
 # loop subjects
 for iS in range(datasets[dataset]['subjects']):
-    # load extracted features
-    if decoder in ['CNN_LSTM']:
-        filename = fileLoc + datasets[dataset]['subject_name'][iS] + "_wavelet_features_100seq.pkl"
-    else:
-        filename = fileLoc + datasets[dataset]['subject_name'][iS] + "_HGALFS_features_200seq.pkl"
-        
-    with open(filename, "rb") as f:
-        ECoG_train, trajectory_train, ECoG_test, trajectory_test = pickle.load(f)
+    
+    # initialize the random seeds
+    set_seed(seed)
+    g = torch.Generator()
+    g.manual_seed(seed)
+    
+    # load data
+    data = loadmat(fileLoc + datasets[dataset]['subject_name'][iS] + '.mat')
+    
+    # data segmentation & feature extraction
+    ECoG_train, trajectory_train, ECoG_test, trajectory_test = prepare_taskFormatedData(dataset, data, feature_type, fs_ecog, fs_dg, win_size, delay=0)
 
     # get the validation set (1/10) from original training set
     val_len = ECoG_train.shape[0] // 10
-    ECoG_val, trajectory_val = ECoG_train[-val_len:, :, :, :], trajectory_train[-val_len:, :]
-    ECoG_train, trajectory_train = ECoG_train[:-val_len, :, :, :], trajectory_train[:-val_len, :]
+    ECoG_val, trajectory_val = ECoG_train[-val_len:, ], trajectory_train[-val_len:, :]
+    ECoG_train, trajectory_train = ECoG_train[:-val_len, ], trajectory_train[:-val_len, :]
 
     # z-score normalization for ECoG
     norm = Scaler4D()
@@ -124,29 +131,13 @@ for iS in range(datasets[dataset]['subjects']):
     trajectory_val = (trajectory_val - mean_traj) / std_traj
     trajectory_test = (trajectory_test - mean_traj) / std_traj
 
-    # initialize the random seeds
-    set_seed(seed)
-    g = torch.Generator()
-    g.manual_seed(seed)
-
-    # select a model
-    if decoder == 'LSTM':
-        ECoG_train = select_ecog_features(ECoG_train, window_len=10, freq_idx=[0])
-        ECoG_val = select_ecog_features(ECoG_val, window_len=10, freq_idx=[0])
-        ECoG_test = select_ecog_features(ECoG_test, window_len=10, freq_idx=[0])
-        model = LSTM(input_size=ECoG_train.shape[1], hidden_size=256, output_size=5,
-                     dropout_prob=0.5)
-
-    elif decoder == 'CNN_LSTM':
-        model = CNN_LSTM(input_size=ECoG_train.shape[1], output_size=5, dropout_prob=0.5)
-    
-    elif decoder == 'HiLoFuseNet':
-        ECoG_train = select_ecog_features(ECoG_train, window_len=1, freq_idx=[0,1])
-        ECoG_val = select_ecog_features(ECoG_val, window_len=1, freq_idx=[0,1])
-        ECoG_test = select_ecog_features(ECoG_test, window_len=1, freq_idx=[0,1])
-        _, C, T, F = ECoG_train.shape
-        model = HiLoFuseNet(C=C, F=F, lstm_hidden=LSTM_hiddensize, D=CNN_D,
-                          output_size=5, dropout_prob=0.5)
+    # init model
+    ECoG_train = select_ecog_features(ECoG_train, window_len=1, freq_idx=[0,1])
+    ECoG_val = select_ecog_features(ECoG_val, window_len=1, freq_idx=[0,1])
+    ECoG_test = select_ecog_features(ECoG_test, window_len=1, freq_idx=[0,1])
+    _, C, T, F = ECoG_train.shape
+    model = HiLoFuseNet(C=C, F=F, lstm_hidden=LSTM_hiddensize, D=CNN_D,
+                      output_size=5, dropout_prob=0.5)
 
     model.to(device)
 
@@ -165,43 +156,52 @@ for iS in range(datasets[dataset]['subjects']):
     loss_function = MSELoss()
 
     optimizer = torch.optim.Adam(list(model.parameters()), lr=1*1e-3)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer,
+        mode='max',
+        factor=0.5,
+        patience=5
+        )
     
     # training
-    early_stopping = EarlyStopping_performance(patience=10)
+    early_stopping = EarlyStopping_performance(patience=15)
     for epoch in range(epoches):
         # -------- train --------
         loss_train, corr_train = train(train_loader, model, optimizer, loss_function, device)
-        corr_train_str = ", ".join([f"{c:.4f}" for c in corr_train])
+        # corr_train_str = ", ".join([f"{c:.4f}" for c in corr_train])
         # print(f"[Subject: {iS}, Epoch: {epoch}] Train Loss: {loss_train:.4f}, Corr: {corr_train_str}")
-
+    
         # -------- validation --------
         loss_val, corr_val = validation(val_loader, model, loss_function, device)
-        corr_val_str = ", ".join([f"{c:.4f}" for c in corr_val])
-        # print(f"[...] Val   Loss: {loss_val:.4f}, Corr: {corr_val_str}")
-
-        # -------- Early Stopping --------
         corr_val_mean = np.mean(corr_val)
-        best_model_weights = early_stopping(corr_val_mean, model)
-        if best_model_weights is not None:
-            model.load_state_dict(best_model_weights)
+        # corr_val_str = ", ".join([f"{c:.4f}" for c in corr_val])
+        # print(f"[...] Val   Loss: {loss_val:.4f}, Corr: {corr_val_str}")
+    
+        # update LR scheduler
+        scheduler.step(corr_val_mean)
+    
+        # -------- Early Stopping --------
+        stop_now = early_stopping(corr_val_mean, model, epoch)
+        if stop_now:
             print(f"Early stopping triggered at epoch {epoch}.")
             break
-
+    
     # test
+    early_stopping.load_best_model(model)
     corr_test, traj_target, traj_predict = test(test_loader, model, device)
     corr_mean = np.mean(corr_test)
     corr_test_str = ", ".join([f"{c:.4f}" for c in corr_test])
     print(f"subject{iS}: test corr = {corr_test_str}, mean = {corr_mean:.4f}\n", flush=True)
-
+    
     corr_allSub[:, iS] = corr_test
     traj_true[f'sub{iS}'].append(traj_target)
     traj_pred[f'sub{iS}'].append(traj_predict)
-            
+
 print(f"all subject corr:\n{corr_allSub} \n mean = {np.mean(corr_allSub): .4f} ", flush=True)
 
 # ---- save group corr ----
-save_fileName = dataset + '_' + decoder + '_batch' + str(batch_size) + '_seed' + str(seed) + '_d'+str(CNN_D) + '_hid' + str(LSTM_hiddensize) + '_o5_cc.npy'
-cc_save_path = os.path.join(save_root, save_fileName)
+save_fileName_cc = f"{dataset}_{decoder}_{lossFunc}_seed{seed}_win{win_size}_d{CNN_D}_hid{LSTM_hiddensize}_o5_cc.npy"
+cc_save_path = os.path.join(save_root, save_fileName_cc)
 np.save(cc_save_path, corr_allSub)
 
 # ---- save group trajectory ----
@@ -209,6 +209,6 @@ traj_save = {
     'true': traj_true,
     'pred': traj_pred
 }
-save_fileName = dataset + '_' + decoder + '_batch' + str(batch_size) + '_seed' + str(seed) + '_d'+str(CNN_D) + '_hid' + str(LSTM_hiddensize)  + '_o5_trajectory.npz'
-traj_save_path = os.path.join(save_root, save_fileName)
+save_fileName_traj = f"{dataset}_{decoder}_{lossFunc}_seed{seed}_win{win_size}_d{CNN_D}_hid{LSTM_hiddensize}_o5_trajectory.npz"
+traj_save_path = os.path.join(save_root, save_fileName_traj)
 np.savez(traj_save_path, **traj_save)

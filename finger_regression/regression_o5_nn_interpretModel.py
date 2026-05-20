@@ -3,9 +3,10 @@ import random
 import os
 import numpy as np
 import pickle
-from models.prepareDataset import Scaler4D, constructDataset, BatchShuffleSampler, select_ecog_features
+from scipy.io import loadmat
 
-from models.nn_regressors import LSTM, CNN_LSTM, HiLoFuseNet
+from models.prepareDataset import Scaler3D, Scaler4D, constructDataset, BatchShuffleSampler, prepare_taskFormatedData, select_ecog_features
+from models.nn_regressors import HiLoFuseNet
 from models.nn_train_and_test import train, validation, test, EarlyStopping_performance
 from models.nn_lossFunc import MSELoss
 
@@ -30,23 +31,46 @@ def set_seed(seed=42):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
+    torch.set_float32_matmul_precision("highest")
     os.environ['PYTHONHASHSEED'] = str(seed)
-
+    os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
 
 # random seeds for dataloader
 def seed_worker(worker_id):
-    np.random.seed(torch.initial_seed() % (2 ** 32))
-    random.seed(torch.initial_seed() % (2 ** 32))
-
+    np.random.seed(torch.initial_seed() % (2**32))
+    random.seed(torch.initial_seed() % (2**32))
 
 # some settings listed below:
 epoches = 200
-batch_size = 128  # 16, 32, 48, 64, 80, 96, 112, 128, 142, 160
+batch_size = 128 
 dataset = 'Stanford'
 decoder = 'HiLoFuseNet'
 lossFunc = 'mse'
 seed = 42
-CNN_D = 16
+win_size = 1
+CNN_D = 20
+
+if decoder in ['HiLoFuseNet', 'LSTM', 'MLP']:
+    feature_type = 'HGALFS'
+
+elif decoder in ['PLS', 'NPLS', 'HOPLS', 'WaT', 'WaTFi', 'WaTEi']:
+    feature_type = 'wavelet_10_150Hz'
+
+elif decoder in ['CNN_LSTM', 'RF']:
+    feature_type = 'wavelet_5_195Hz'
+
+elif decoder in ['DeepFingerNet']:
+    feature_type = 'wavelet_40_200Hz'
+
+elif decoder in ['eBTTR']:
+    feature_type = 'physiologicalBand'
+    
+elif decoder in ['EEGNet']:
+    feature_type = 'raw'
+else:pass
+
+save_root = 'results/o5/interpretModel/'
+os.makedirs(save_root, exist_ok=True)
 
 # metadata for different datasets
 datasets = {
@@ -55,42 +79,48 @@ datasets = {
         "subject_name": ['sub1', 'sub2', 'sub3'],
         "fs_ecog": 1000,
         "fs_dg": 25,
-        # file path to extracted features
-        "path": './BCIIV/features/'
+        # file path to preprocessed data
+        "path": './data/BCIIV/'
     },
     "Stanford": {
         "subjects": 9,
         "subject_name": ['bp', 'cc', 'ht','jc','jp','mv','wc','wm','zt'],
         "fs_ecog": 1000,
         "fs_dg": 25,
-        "path": './Stanford/features/'
-    }
+        "path": './data/Stanford/'
+    },
 }
 
 fileLoc = datasets[dataset]['path']
 fs_dg = datasets[dataset]['fs_dg']
 fs_ecog = datasets[dataset]['fs_ecog']
 
-corr_allSub = np.zeros((5, datasets[dataset]['subjects']))
 # loop subjects
 for iS in range(datasets[dataset]['subjects']):
     
-    # load extracted features
-    if decoder in ['CNN_LSTM']:
-        filename = fileLoc + datasets[dataset]['subject_name'][iS] + "_wavelet_features_100seq.pkl"
-    else:
-        filename = fileLoc + datasets[dataset]['subject_name'][iS] + "_HGALFS_features_200seq.pkl"
+    # initialize the random seeds
+    set_seed(seed)
+    g = torch.Generator()
+    g.manual_seed(seed)
     
-    with open(filename, "rb") as f:
-        ECoG_train, trajectory_train, ECoG_test, trajectory_test = pickle.load(f)
+    # load data
+    data = loadmat(fileLoc + datasets[dataset]['subject_name'][iS] + '.mat')
+    
+    # data segmentation & feature extraction
+    ECoG_train, trajectory_train, ECoG_test, trajectory_test = prepare_taskFormatedData(dataset, data, feature_type, fs_ecog, fs_dg, win_size, delay=0)
     
     # get the validation set (1/10) from original training set
     val_len = ECoG_train.shape[0] // 10
-    ECoG_val, trajectory_val = ECoG_train[-val_len:, :, :, :], trajectory_train[-val_len:, :]
-    ECoG_train, trajectory_train = ECoG_train[:-val_len, :, :, :], trajectory_train[:-val_len, :]
+    ECoG_val, trajectory_val = ECoG_train[-val_len:, ], trajectory_train[-val_len:, :]
+    ECoG_train, trajectory_train = ECoG_train[:-val_len, ], trajectory_train[:-val_len, :]
     
     # z-score normalization for ECoG
-    norm = Scaler4D()
+    if ECoG_train.ndim == 4:
+        norm = Scaler4D()
+    
+    elif ECoG_train.ndim == 3:
+        norm = Scaler3D()
+    
     norm.fit(ECoG_train)
     ECoG_train = norm.transform(ECoG_train)
     ECoG_val = norm.transform(ECoG_val)
@@ -105,21 +135,17 @@ for iS in range(datasets[dataset]['subjects']):
     trajectory_val = (trajectory_val - mean_traj) / std_traj
     trajectory_test = (trajectory_test - mean_traj) / std_traj
     
-    # initialize the random seeds
-    set_seed(seed)
-    g = torch.Generator()
-    g.manual_seed(seed)
-    
     # load the model
-    ECoG_train = select_ecog_features(ECoG_train, window_len=1, freq_idx=[0, 1])
-    ECoG_val = select_ecog_features(ECoG_val, window_len=1, freq_idx=[0, 1])
-    ECoG_test = select_ecog_features(ECoG_test, window_len=1, freq_idx=[0, 1])
+    ECoG_train = select_ecog_features(ECoG_train, window_len=1, freq_idx=[0,1])
+    ECoG_val = select_ecog_features(ECoG_val, window_len=1, freq_idx=[0,1])
+    ECoG_test = select_ecog_features(ECoG_test, window_len=1, freq_idx=[0,1])
+
     _, C, T, F = ECoG_train.shape
     print(f'channel number of sub{iS}: {C}')
     
     model = HiLoFuseNet(C=C, F=F, lstm_hidden=256, D=CNN_D,
-                        output_size=5, dropout_prob=0.5).to(device)
-    
+                      output_size=5, dropout_prob=0.5).to(device)
+                        
     # Pytorch data format
     trainDataset = constructDataset(ECoG_train, trajectory_train)
     valDataset = constructDataset(ECoG_val, trajectory_val)
@@ -132,34 +158,44 @@ for iS in range(datasets[dataset]['subjects']):
     val_loader = DataLoader(valDataset, batch_size=64, shuffle=False, worker_init_fn=seed_worker, generator=g)
     test_loader = DataLoader(testDataset, batch_size=64, shuffle=False, worker_init_fn=seed_worker, generator=g)
     
-    loss_function = MSELoss()
-
-    optimizer = torch.optim.Adam(list(model.parameters()), lr=1 * 1e-3)
+    if lossFunc == 'mse':
+        loss_function = MSELoss()
+    else:
+        pass
+    
+    optimizer = torch.optim.Adam(list(model.parameters()), lr=1*1e-3)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer,
+        mode='max',
+        factor=0.5,
+        patience=5
+        )
     
     # training
-    early_stopping = EarlyStopping_performance(patience=10)
+    early_stopping = EarlyStopping_performance(patience=15)
     for epoch in range(epoches):
         # -------- train --------
         loss_train, corr_train = train(train_loader, model, optimizer, loss_function, device)
-        corr_train_str = ", ".join([f"{c:.4f}" for c in corr_train])
+        # corr_train_str = ", ".join([f"{c:.4f}" for c in corr_train])
         # print(f"[Subject: {iS}, Epoch: {epoch}] Train Loss: {loss_train:.4f}, Corr: {corr_train_str}")
     
         # -------- validation --------
         loss_val, corr_val = validation(val_loader, model, loss_function, device)
-        corr_val_str = ", ".join([f"{c:.4f}" for c in corr_val])
+        corr_val_mean = np.mean(corr_val)
+        # corr_val_str = ", ".join([f"{c:.4f}" for c in corr_val])
         # print(f"[...] Val   Loss: {loss_val:.4f}, Corr: {corr_val_str}")
     
+        # update LR scheduler
+        scheduler.step(corr_val_mean)
+    
         # -------- Early Stopping --------
-        corr_val_mean = np.mean(corr_val)
-        best_model_weights = early_stopping(corr_val_mean, model)
-        
-        if best_model_weights is not None:
-            torch.save(best_model_weights, f'results/o5/interpretModel/hilo_model_weights_{datasets[dataset]["subject_name"][iS]}.pth')
-            model.load_state_dict(best_model_weights)
+        stop_now = early_stopping(corr_val_mean, model, epoch)
+        if stop_now:
             print(f"Early stopping triggered at epoch {epoch}.")
             break
     
     # save model parameters
+    early_stopping.load_best_model(model)
     model.eval()
     weights = model.spatialConv[0].weight.detach().cpu()
     weights_group1 = weights[0:CNN_D]  # (D, 1, C, 1)
@@ -173,7 +209,7 @@ for iS in range(datasets[dataset]['subjects']):
         'kernels_group2': viz_group2   # (D, C) 
     }
     
-    save_filename = f'results/o5/interpretModel/spatial_kernels_{datasets[dataset]["subject_name"][iS]}.mat'
-    scipy.io.savemat(save_filename, mat_data)
+    save_filename = f'spatial_kernels_{datasets[dataset]["subject_name"][iS]}.mat'
+    scipy.io.savemat(save_root + save_filename, mat_data)
 
 
