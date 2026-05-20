@@ -30,7 +30,7 @@ Raw ECoG signals were preprocessed using **MATLAB FieldTrip-20230926**.
 * Stanford Preprocessing: `data_preprocessing/data_preprocessing_Stanford.m`
 
 ### 3. Run Experiments
-Configure the pytorch environment via `finger_regression/environment.yml`. The following table summarizes the scripts used to reproduce the paper's finding. $\color{red}{Check the source data:}$ Raw output files are provided in `finger_regression/results` </font>. The .slum file provides the code to interact with a supercomputing cluster. If you run the script locally, please change the inputs in the .py file according to the corresponding settings from the .slurm file. 
+Configure the pytorch environment via `finger_regression/environment.yml`. The following table summarizes the scripts used to reproduce the paper's finding. $\color{red}{\text{Check the source data:}}$ Raw output files are provided in `finger_regression/results` </font>. The .slum file provides the code to interact with a supercomputing cluster. If you run the script locally, please change the inputs in the .py file according to the corresponding settings from the .slurm file. 
 
 | Experiment | Execution Script(s) | Results Folder |
 | :--- | :--- | :--- |
