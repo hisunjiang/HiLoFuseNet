@@ -3,7 +3,7 @@
 This repository provides the official PyTorch implementation of the finger movement decoding framework detailed in the paper:
 > Sun et al., "Spectro-Temporal Fusion of High-Gamma and Low-Frequency ECoG Signals for Intracranial Finger Movement Decoding," 2026. *under review*.
 
-The current manuscript is available here. This version extends the original TechRxiv preprint by:
+The current manuscript is available [here](manuscript.pdf). This version extends the original TechRxiv preprint by:
 - Discussing the impact of lookback windows.
 - Including additional decoder baselines.
 - Standardizing the decoding framework to ensure it is strictly causal.
