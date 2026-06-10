@@ -9,7 +9,16 @@ The current manuscript is available [here](manuscript.pdf). This version extends
 - Standardizing the decoding framework to ensure it is strictly causal.
 
 **Real-time demonstration with MANO hand avatar**
-[▶ Watch the demonstration video](hand avatar.mp4)
+<p align="center">
+  <a href="hand_avatar.mp4">
+    <img src="hand_avatar.gif" width="800"
+         alt="Hand avatar animation">
+  </a>
+</p>
+
+<p align="center">
+  Click the animation to watch the full video.
+</p>
 
 ---
 ## 🛠️ Decoding Framework
