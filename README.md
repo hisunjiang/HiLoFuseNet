@@ -8,6 +8,9 @@ The current manuscript is available [here](manuscript.pdf). This version extends
 - Including additional decoder baselines.
 - Standardizing the decoding framework to ensure it is strictly causal.
 
+**Real-time demonstration with MANO hand avatar**
+[▶ Watch the demonstration video](hand avatar.mp4)
+
 ---
 ## 🛠️ Decoding Framework
 The proposed framework is characterized by (a) a streamlined ECoG feature extraction pipeline and (b) a compact neural network for learning spectro-temporal information.
