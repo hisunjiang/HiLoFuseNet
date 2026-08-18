@@ -57,6 +57,7 @@ $\color{red}{\text{Check the source data:}}$ Raw output files are provided in `f
 | MLs | `regression_o5_ml.py`, `submit_o5_ml.slurm` | `finger_regression/results/o5` |
 | Model Interpretation | `regression_o5_nn_interpretModel.py`, `submit_o5_nn_interpretModel.slurm` | `finger_regression/results/o5/interpretModel` |
 | Ablation Study | `regression_o5_nn_ablation.py`, `submit_o5_nn_ablation.slurm` | `finger_regression/results/o5/ablation` |
+| Feature Swap | `regression_o5_nn_featureSwap.py`, `submit_o5_nn_featureSwap.slurm` | `finger_regression/results/o5/featureSwap` |
 | Hyperparameter Test | `regression_o5_nn_hyperparameter.py`, `submit_o5_nn_hyperparameter.slurm` | `finger_regression/results/o5/hyperparameter` |
 
 ### 4. Visualization
@@ -67,9 +68,6 @@ A sincere thanks to the code contributors of BTTR, HOPLS, and DeepFingerNet.
 * BTTR: [https://github.com/TheAxeC/block-term-tensor-regression](https://github.com/TheAxeC/block-term-tensor-regression)
 * HOPLS: [https://github.com/arthurdehgan/HOPLS](https://github.com/arthurdehgan/HOPLS)
 * DeepFingerNet: [https://github.com/UM-Tao/DeepFingerNet](https://github.com/UM-Tao/DeepFingerNet)
-
-## ⚠️ We need you
-We benchmarked a large number of decoders across the BCIIV and Stanford fingerflex datasets. Since most of them did not open-source their code, despite our best efforts to replicate the reported results, the discrepancies we observed were substantial. If u have suggestions to improve the code, please contact us.
 
 ## Citation
 Hope this model helps your research. We would appreciate if u cite us.
