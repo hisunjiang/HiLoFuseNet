@@ -75,7 +75,7 @@ seed = args.seed
 win_size = args.win_size
 feature_type = 'wavelet_5_195Hz'
 
-save_root = 'results/o5/'
+save_root = 'results/o5/featureSwap/'
 os.makedirs(save_root, exist_ok=True)
 
 # metadata for different datasets
