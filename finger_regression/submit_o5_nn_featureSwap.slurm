@@ -7,16 +7,16 @@
 #SBATCH --gpus-per-node=1
 #SBATCH --mem=80G
 #SBATCH --time=5:00:00
-#SBATCH --account=llonpp
+#SBATCH --account="xxxx" 						# <- change here
 #SBATCH --job-name="finger_o5_featureSwap"
-#SBATCH --chdir="/vsc-hard-mounts/leuven-user/355/vsc35565/HiLoFuseNet/"
-#SBATCH --error="/vsc-hard-mounts/leuven-user/355/vsc35565/HiLoFuseNet/logs/%x.e%A_%a"
-#SBATCH --output="/vsc-hard-mounts/leuven-user/355/vsc35565/HiLoFuseNet/logs/%x.o%A_%a"
+#SBATCH --chdir="/project/" 					# <- change here
+#SBATCH --error="/project/logs/%x.e%A_%a" 		# <- change here
+#SBATCH --output="/project/logs/%x.o%A_%a" 		# <- change here
 #SBATCH --mail-type="END,FAIL,TIME_LIMIT"
-#SBATCH --mail-user="qiang.sun@kuleuven.be"
-#SBATCH --array=0-3
+#SBATCH --mail-user="qiang.sun@kuleuven.be" 	# <- change here
+#SBATCH --array=0-5								# <- change here
 
-source /vsc-hard-mounts/leuven-data/355/vsc35565/miniconda/etc/profile.d/conda.sh
+source /xxxx/miniconda/etc/profile.d/conda.sh 	# <- change here
 conda activate decode
 
 echo "==================== SLURM/Conda/Python ===================="
@@ -37,10 +37,10 @@ import time
 import numpy as np
 
 datasets = ['BCIIV', 'Stanford'] # 'BCIIV', 'Stanford'
-decoders = ['MLP', 'LSTM'] # 'MLP', 'LSTM', 'EEGNet', 'DeepFingerNet', 'CNN_LSTM', 'WaT', 'WaTEi','HiLoFuseNet'
-lossFuncs = ['mse'] # 'mse', 
-seeds = [42] #[42,43,44,45,46]
-win_sizes = [2.8] # np.arange(0.4, 3, 0.2) -> np.arange(0.4, 2, 0.2) , np.arange(2, 3, 0.2)
+decoders = ['MLP', 'LSTM', 'HiLoFuseNet']
+lossFuncs = ['mse']
+seeds = [42]
+win_sizes = [2.8]
 
 combinations = []
 for ds_name in datasets:
